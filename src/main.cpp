@@ -30,6 +30,8 @@ void TestFunc1(){
         }
         std::cout << "\n";
     }
+    
+    graph.DumpGraph("test_cycles", "CycleAnalysis");
 }
 
 void TestFunc2(){
@@ -50,12 +52,12 @@ void TestFunc3(){
     graph.GenerateEdges(20);
 
     graph.TraceReachabaleValues();
-    graph.DumpGraph("dump_func_3.dot", "Graph_3");
     graph.DumpQuasiInvariants();
+    graph.DumpGraph("graph");
 }
 
 int main() {
-    TestFunc3();
-
+    TestFunc1();
+    
     return 0;
 }

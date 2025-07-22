@@ -1,8 +1,6 @@
 #include <list>
 #include "Graph.h"
 
-#define MY_CONST 16790
-
 AdjacencyList Graph::buildAdjacencyList() const {
     AdjacencyList adj(blocks_counter_);
     for (const auto& [index, block] : blocks_) {
@@ -79,7 +77,7 @@ void Graph::findCycles(size_t startIndex,
     dfs(startIndex, startIndex, visited, path, reachable, result, adj);
 }
 
-std::vector<Cycle> Graph::findAllCycles() const {
+std::vector<Cycle> Graph::findAllCycles() {
     if (blocks_counter_ == 0) return {};
 
     auto adj = buildAdjacencyList();
@@ -88,6 +86,12 @@ std::vector<Cycle> Graph::findAllCycles() const {
 
     for (size_t startIndex = 0; startIndex < blocks_counter_; ++startIndex) {
         findCycles(startIndex, adj, reachable, result);
+    }
+
+    for(const auto& cycle: result){
+        for(const auto& id: cycle){
+            blocks_.at(id).cycle_member_ = true; 
+        }
     }
 
     return result;
@@ -114,34 +118,33 @@ void Graph::TraceReachabaleValues(){
     }
 }
 
-size_t Graph::InvestigateDepth(size_t id, size_t depth, size_t current) const{
+size_t Graph::InvestigateDepth(size_t id, size_t depth) const{
     if(blocks_.at(id).reachable_from_cycle_){
         return depth;
     }
 
-    if(blocks_.at(id).successors_.empty()) return 0;
+    if(blocks_.at(id).successors_.empty()) return 100000;
 
     std::vector<size_t> depths;
     for(auto it: blocks_.at(id).successors_){
-        depths.push_back(InvestigateDepth(it, ++depth, current));
+        depths.push_back(InvestigateDepth(it, depth + 1));
     }
-    //for(auto it: blocks_.at(id).predcessors_){
-    //    depths.push_back(InvestigateDepth(it, ++depth, current));
-    //}
-    return *max_element(depths.begin(), depths.end());
+
+    return *std::max_element(depths.begin(), depths.end());
 }
 
 size_t Graph::GetQuasiInvariantDepth(const size_t id) const{
-    return InvestigateDepth(id, 0, id);
+    return InvestigateDepth(id, 0);
 }
 
-void Graph::DumpQuasiInvariants() const {
+void Graph::DumpQuasiInvariants() {
+    std::vector<size_t> depth;
     std::cout << "Dumping unreachable from cycle nodes: \n";
-    for(const auto& [block_id, block]: blocks_){
+    for(auto& [block_id, block]: blocks_){
         if(!block.reachable_from_cycle_){
             std::cout << "basic block "<< block_id << ", depth: ";
-            size_t depth = GetQuasiInvariantDepth(block_id);
-            std::cout << depth << "\n";
+            block.depth_ = GetQuasiInvariantDepth(block_id);
+            std::cout << "\n";
         }
     }
     std::cout << "\n";
@@ -210,7 +213,7 @@ void Graph::GenerateEdges(size_t num_of_edges){
 
 
 void Graph::DumpGraph(const std::string& filename, const std::string& graph_name){
-    std::ofstream dotFile(filename);
+    std::ofstream dotFile(filename + ".dot");
     if (!dotFile.is_open()) {
         std::cerr << "Error opening DOT file\n";
         return;
@@ -218,7 +221,7 @@ void Graph::DumpGraph(const std::string& filename, const std::string& graph_name
 
     dotFile << "digraph " << graph_name << " {\n";
     dotFile << "    rankdir=\"TB\";\n";
-    dotFile << "    node [shape=box, style=\"rounded,filled\", fillcolor=\"#e6f3ff\"];\n";
+    dotFile << "    node [shape=box, style=\"rounded,filled\"];\n";
     dotFile << "    edge [color=\"#0066cc\"];\n";
     
     dotFile << "    label=\"Predecessor Tree\";\n";
@@ -227,18 +230,34 @@ void Graph::DumpGraph(const std::string& filename, const std::string& graph_name
     dotFile << "    fontweight=\"bold\";\n\n";
 
     for (const auto& [id, block] : blocks_) {
-        dotFile << "    block" << id << " [label=\"Block " << id << "\"];\n";
+        dotFile << "    block" << id << " [label=\"Block " << id;
+        if (!block.reachable_from_cycle_) {
+            dotFile << "\\nDepth: ";
+            dotFile << block.depth_;
+        }
+        dotFile << "\", fillcolor=\"";
+        
+        if (block.reachable_from_cycle_) {
+            dotFile << "#ffcccc\"];\n";
+        } else {
+            dotFile << "#e6f3ff\"];\n";
+        }
     }
     dotFile << "\n";
 
     for (const auto& [id, block] : blocks_) {
         for (size_t predId : block.predcessors_) {
-            dotFile << "    block" << predId << " -> block" << id << ";\n";
+            dotFile << "    block" << predId << " -> block" << id;
+            if (blocks_[predId].cycle_member_ && block.cycle_member_) {
+                dotFile << " [color=\"#ff0000\", penwidth=2];\n";
+            } else {
+                dotFile << " [color=\"#0066cc\"];\n";
+            }
         }
     }
 
     dotFile << "}\n";
     dotFile.close();
-    std::cout << "DOT file generated: " << filename << "\n";
-    system(("dot -Tpng " + filename + " -o ../plots/" + filename + ".png").c_str());
+    std::cout << "DOT file generated: " << filename << ".dot\n";
+    system(("dot -Tpng " + filename + ".dot -o ../plots/" + filename + ".png").c_str());
 }

@@ -40,7 +40,7 @@ private:
     void InvestigateCycleReachability(size_t id); 
             // find all values, that are reachable from the cycle
 
-    size_t InvestigateDepth(size_t id, size_t depth, size_t current) const; 
+    size_t InvestigateDepth(size_t id, size_t depth) const; 
             // find distance from quasi-invariant to first reachable_from_cycle_ block
 
 public:
@@ -73,16 +73,16 @@ public:
 
     void GenerateEdges(size_t num_of_edges); // randomly generate edges
 
-    void DumpGraph(const std::string& filename = "graph.dot", 
-                   const std::string& graph_name = "Graph"); // dump graph with graphvis
+    void DumpGraph(const std::string& filename = "graph", 
+                   const std::string& graph_name = "CFG"); // dump graph with graphvis
 
-    std::vector<Cycle> findAllCycles() const;
+    std::vector<Cycle> findAllCycles();
 
     void TraceReachabaleValues();
 
     size_t GetQuasiInvariantDepth(const size_t id) const;
     
-    void DumpQuasiInvariants() const;
+    void DumpQuasiInvariants();
 };
 
 /*
