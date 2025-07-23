@@ -56,14 +56,14 @@ Some randomly generated graphs
 
 <table>
   <tr valign="top">
-    <td><img src="plots/Example1.png" alt="Image 1" style="width: 100%;" /></td>
-    <td><img src="plots/Example2.png" alt="Image 2" style="width: 100%;" /></td>
+    <td><img src="plots/Example1.png" alt="Image" style="width: 100%;" /></td>
+    <td><img src="plots/Example2.png" alt="Image" style="width: 100%;" /></td>
   </tr>
 </table>
 
 <table>
   <tr valign="top">
-    <td><img src="plots/Example3.png" alt="Image 1" style="width: 100%;" /></td>
-    <td><img src="plots/Example4.png" alt="Image 2" style="width: 100%;" /></td>
+    <td><img src="plots/Example3.png" alt="Image" style="width: 100%;" /></td>
+    <td><img src="plots/Example4.png" alt="Image" style="width: 100%;" /></td>
   </tr>
 </table>
