@@ -144,7 +144,7 @@ void Graph::DumpQuasiInvariants() {
         if(!block.reachable_from_cycle_){
             std::cout << "basic block "<< block_id << ", depth: ";
             block.depth_ = GetQuasiInvariantDepth(block_id);
-            std::cout << "\n";
+            std::cout << block.depth_ << "\n";
         }
     }
     std::cout << "\n";
@@ -224,7 +224,7 @@ void Graph::DumpGraph(const std::string& filename, const std::string& graph_name
     dotFile << "    node [shape=box, style=\"rounded,filled\"];\n";
     dotFile << "    edge [color=\"#0066cc\"];\n";
     
-    dotFile << "    label=\"Predecessor Tree\";\n";
+    dotFile << "    label=\"Graph\";\n";
     dotFile << "    labelloc=\"t\";\n";
     dotFile << "    fontsize=16;\n";
     dotFile << "    fontweight=\"bold\";\n\n";
@@ -232,8 +232,14 @@ void Graph::DumpGraph(const std::string& filename, const std::string& graph_name
     for (const auto& [id, block] : blocks_) {
         dotFile << "    block" << id << " [label=\"Block " << id;
         if (!block.reachable_from_cycle_) {
-            dotFile << "\\nDepth: ";
-            dotFile << block.depth_;
+            if(block.depth_ == 100000){
+                dotFile << "\\nLoop invariant ";
+            }
+            else{
+                dotFile << "\\nDepth: ";
+                dotFile << block.depth_;
+            }
+
         }
         dotFile << "\", fillcolor=\"";
         

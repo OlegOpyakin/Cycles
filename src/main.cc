@@ -49,15 +49,15 @@ void TestFunc2(){
 void TestFunc3(){
     Graph graph(10);
 
-    graph.GenerateEdges(20);
+    graph.GenerateEdges(15);
 
     graph.TraceReachabaleValues();
     graph.DumpQuasiInvariants();
-    graph.DumpGraph("graph");
+    graph.DumpGraph("Example", "Example");
 }
 
 int main() {
-    TestFunc1();
-    
+    //TestFunc1();
+    TestFunc3();
     return 0;
 }
