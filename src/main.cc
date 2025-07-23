@@ -49,7 +49,7 @@ void TestFunc2(){
 void TestFunc3(){
     Graph graph(10);
 
-    graph.GenerateEdges(15);
+    graph.GenerateEdges(16);
 
     graph.TraceReachabaleValues();
     graph.DumpQuasiInvariants();
