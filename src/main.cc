@@ -47,13 +47,30 @@ void TestFunc2(){
 }
 
 void TestFunc3(){
-    Graph graph(10);
+    Graph graph1(8);
+    Graph graph2(10);
+    Graph graph3(10);
+    Graph graph4(12);
 
-    graph.GenerateEdges(14);
+    graph1.GenerateEdges(14);
+    graph1.TraceReachabaleValues();
+    graph1.DumpQuasiInvariants();
+    graph1.DumpGraph("Example1", "Example1");
 
-    graph.TraceReachabaleValues();
-    graph.DumpQuasiInvariants();
-    graph.DumpGraph("Example", "Example");
+    graph2.GenerateEdges(14);
+    graph2.TraceReachabaleValues();
+    graph2.DumpQuasiInvariants();
+    graph2.DumpGraph("Example2", "Example2");
+
+    graph3.GenerateEdges(14);
+    graph3.TraceReachabaleValues();
+    graph3.DumpQuasiInvariants();
+    graph3.DumpGraph("Example3", "Example3");
+
+    graph4.GenerateEdges(17);
+    graph4.TraceReachabaleValues();
+    graph4.DumpQuasiInvariants();
+    graph4.DumpGraph("Example4", "Example4");
 }
 
 int main() {
