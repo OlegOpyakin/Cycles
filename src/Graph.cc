@@ -118,16 +118,57 @@ void Graph::TraceReachabaleValues(){
     }
 }
 
-size_t Graph::InvestigateDepth(size_t id, size_t depth) const{
+/*
+struct Graph::DepthInfo Graph::InvestigateDepth(size_t id, struct Graph::DepthInfo& depth_info) const{
     if(blocks_.at(id).reachable_from_cycle_){
-        return depth;
+        return depth_info;
     }
 
-    if(blocks_.at(id).successors_.empty()) return 100000;
+    if(blocks_.at(id).successors_.empty()){
+        depth_info.is_cycle_invariant_ = true;
+        return depth_info;
+    } 
 
     std::vector<size_t> depths;
-    for(auto it: blocks_.at(id).successors_){
-        depths.push_back(InvestigateDepth(it, depth + 1));
+    std::vector<bool> is_cycle_invariant;
+
+    for(auto it: blocks_.at(id).predcessors_){
+        
+        //struct Graph::DepthInfo tmp_depth_info = depth_info;
+        //tmp_depth_info.depth_ = tmp_depth_info.depth_ + 1;
+        //std::clog << "tmp depth info after init: " << tmp_depth_info.depth_ << "\n";
+        
+
+        struct Graph::DepthInfo tmp_depth_info = depth_info;
+        ++tmp_depth_info.depth_;
+        tmp_depth_info = InvestigateDepth(it, tmp_depth_info);
+        is_cycle_invariant.push_back(tmp_depth_info.is_cycle_invariant_);
+        //std::clog << "tmp depth info after InvestigateDepth: " << new_tmp_depth_info.depth_ << "\n";
+        depths.push_back(tmp_depth_info.depth_);
+    }
+
+    size_t max_depth = 0;
+    bool is_cycle_invariant_total = true;
+
+    for(auto it: is_cycle_invariant) is_cycle_invariant_total = is_cycle_invariant_total && it;
+    max_depth = *std::max_element(depths.begin(), depths.end());
+
+    depth_info.depth_ = max_depth;
+    depth_info.is_cycle_invariant_ = is_cycle_invariant_total;
+
+    return depth_info;
+}
+*/
+
+size_t Graph::InvestigateDepth(size_t id, size_t depth) const{
+    if(blocks_.at(id).predcessors_.empty()){
+        return depth;
+    } 
+    
+    std::vector<size_t> depths;
+    for(auto it: blocks_.at(id).predcessors_){
+        size_t tmp_depth = depth;
+        depths.push_back(InvestigateDepth(it, ++tmp_depth));
     }
 
     return *std::max_element(depths.begin(), depths.end());
@@ -137,14 +178,42 @@ size_t Graph::GetQuasiInvariantDepth(const size_t id) const{
     return InvestigateDepth(id, 0);
 }
 
+bool Graph::InvestigateLoopInvariant(size_t id) const{
+    if(blocks_.at(id).reachable_from_cycle_){
+        return false;
+    }
+
+    if(blocks_.at(id).successors_.empty()){
+        return true;
+    }
+
+    //std::vector<bool> is_loop_invariant_vec;
+    bool is_cycle_invariant_total = true;
+
+    for(auto it: blocks_.at(id).successors_){
+        //is_loop_invariant_vec.push_back(InvestigateLoopInvariant(it));
+        is_cycle_invariant_total = is_cycle_invariant_total && InvestigateLoopInvariant(it);
+    }
+
+    return is_cycle_invariant_total;
+}
+
+bool Graph::GetLoopInvariant(const size_t id) const{
+    return InvestigateLoopInvariant(id);
+}
+
 void Graph::DumpQuasiInvariants() {
     std::vector<size_t> depth;
     std::cout << "Dumping unreachable from cycle nodes: \n";
     for(auto& [block_id, block]: blocks_){
         if(!block.reachable_from_cycle_){
             std::cout << "basic block "<< block_id << ", depth: ";
+            //block.depth_ = GetQuasiInvariantDepth(block_id);
             block.depth_ = GetQuasiInvariantDepth(block_id);
-            std::cout << block.depth_ << "\n";
+            block.loop_invariant_ = GetLoopInvariant(block_id);
+
+            if(block.loop_invariant_) std::cout << "Invariant\n";
+            else std::cout << block.depth_ << "\n";
         }
     }
     std::cout << "\n";
@@ -192,6 +261,7 @@ void Graph::GenerateEdges(size_t num_of_edges){
         }
         
         if (!edge_exists) {
+            if(from == to) continue;
             AddEdge(from, to);
             num_of_edges--;
         }
@@ -232,7 +302,7 @@ void Graph::DumpGraph(const std::string& filename, const std::string& graph_name
     for (const auto& [id, block] : blocks_) {
         dotFile << "    block" << id << " [label=\"Block " << id;
         if (!block.reachable_from_cycle_) {
-            if(block.depth_ == 100000){
+            if(block.loop_invariant_){
                 dotFile << "\\nLoop invariant ";
             }
             else{
@@ -255,7 +325,7 @@ void Graph::DumpGraph(const std::string& filename, const std::string& graph_name
         for (size_t predId : block.predcessors_) {
             dotFile << "    block" << predId << " -> block" << id;
             if (blocks_[predId].cycle_member_ && block.cycle_member_) {
-                dotFile << " [color=\"#ff0000\", penwidth=2];\n";
+                dotFile << " [color=\"#ff0000ff\", penwidth=2];\n";
             } else {
                 dotFile << " [color=\"#0066cc\"];\n";
             }

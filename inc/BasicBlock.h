@@ -8,11 +8,12 @@ class BasicBlock{
 public:
     bool cycle_member_;
     bool reachable_from_cycle_;
+    bool loop_invariant_;
     size_t depth_;
     std::vector<size_t> predcessors_;
     std::vector<size_t> successors_;
 
-    BasicBlock(): cycle_member_(false), reachable_from_cycle_(false) {}
+    BasicBlock(): cycle_member_(false), reachable_from_cycle_(false), loop_invariant_(false) {}
 
     void AddPred(size_t pred){
         predcessors_.push_back(pred);
