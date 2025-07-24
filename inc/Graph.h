@@ -16,13 +16,6 @@ using AdjacencyList = std::vector<std::vector<size_t>>;
 
 class Graph{
 private:
-    /*
-    struct DepthInfo{
-        size_t depth_;
-        bool is_cycle_invariant_;
-    };
-    */
-
     std::map<size_t, BasicBlock> blocks_;
     size_t blocks_counter_;
     
@@ -49,7 +42,6 @@ private:
     
     size_t InvestigateDepth(size_t id, size_t depth) const; 
 
-    //bool InvestigateLoopInvariant(size_t id) const; 
 
 public:
     Graph(): blocks_counter_(0) {};
@@ -94,13 +86,3 @@ public:
     
     void DumpQuasiInvariants();
 };
-
-/*
-Добрый день, хотео задать вопрос по заданию из 7 лекции про VDG.
-Я же правильно понимаю, что можно сначала найти в графе все замкнутые пути, 
-в том числе и просто связанные блоки. 
-Потом определить вершины, достижимые из этих циклов. Оставщиеся вершины -- 
-и будут наши квази-инварианты. В конце можно для каждого квази-инварианта 
-найти самый дальний достижимый из цикла узел. Его дальность, получается, 
-и есть то, на какой итерации его можно вынести
-*/
