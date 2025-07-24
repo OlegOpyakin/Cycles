@@ -178,28 +178,25 @@ size_t Graph::GetQuasiInvariantDepth(const size_t id) const{
     return InvestigateDepth(id, 0);
 }
 
+/*
 bool Graph::InvestigateLoopInvariant(size_t id) const{
-    if(blocks_.at(id).reachable_from_cycle_){
-        return false;
-    }
-
-    if(blocks_.at(id).successors_.empty()){
+    if(blocks_.at(id).predcessors_.empty()){
         return true;
     }
-
-    //std::vector<bool> is_loop_invariant_vec;
+    
     bool is_cycle_invariant_total = true;
 
-    for(auto it: blocks_.at(id).successors_){
-        //is_loop_invariant_vec.push_back(InvestigateLoopInvariant(it));
+    for(auto it: blocks_.at(id).predcessors_){
         is_cycle_invariant_total = is_cycle_invariant_total && InvestigateLoopInvariant(it);
     }
 
     return is_cycle_invariant_total;
 }
+*/
 
 bool Graph::GetLoopInvariant(const size_t id) const{
-    return InvestigateLoopInvariant(id);
+    return blocks_.at(id).predcessors_.empty();
+    //return InvestigateLoopInvariant(id);
 }
 
 void Graph::DumpQuasiInvariants() {

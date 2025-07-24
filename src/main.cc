@@ -35,15 +35,31 @@ void TestFunc1(){
 }
 
 void TestFunc2(){
-    Graph graph(4);
+    Graph graph1(8);
+    Graph graph2(10);
+    Graph graph3(10);
+    Graph graph4(12);
 
-    graph.AddEdge(0, 1);
-    graph.AddEdge(1, 2);
-    graph.AddEdge(2, 3);
-    graph.AddEdge(3, 2);
 
-    graph.TraceReachabaleValues();
-    graph.DumpQuasiInvariants();
+    graph1.GenerateEdges(14);
+    graph1.TraceReachabaleValues();
+    graph1.DumpQuasiInvariants();
+    graph1.DumpGraph("Example1", "Example1");
+
+    graph2.GenerateEdges(13);
+    graph2.TraceReachabaleValues();
+    graph2.DumpQuasiInvariants();
+    graph2.DumpGraph("Example2", "Example2");
+
+    graph3.GenerateEdges(14);
+    graph3.TraceReachabaleValues();
+    graph3.DumpQuasiInvariants();
+    graph3.DumpGraph("Example3", "Example3");
+
+    graph4.GenerateEdges(17);
+    graph4.TraceReachabaleValues();
+    graph4.DumpQuasiInvariants();
+    graph4.DumpGraph("Example4", "Example4");
 }
 
 void TestFunc3(){

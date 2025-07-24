@@ -49,7 +49,7 @@ private:
     
     size_t InvestigateDepth(size_t id, size_t depth) const; 
 
-    bool InvestigateLoopInvariant(size_t id) const; 
+    //bool InvestigateLoopInvariant(size_t id) const; 
 
 public:
     Graph(): blocks_counter_(0) {};
