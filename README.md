@@ -1,4 +1,4 @@
-# Cycles
+# Cycles(VDG)
 
 ## Overvie
 
@@ -53,6 +53,8 @@ All graphs dumps are saved in ```plots/``` by default
 ## Examples
 
 Some randomly generated graphs
+
+Red blocks are belonging to cycles and the ones, that can be reached from cycles. Blue blocks -- are quasi-invariants. Red arrows show cycles, which were found in the graph.
 
 <table>
   <tr valign="top">
