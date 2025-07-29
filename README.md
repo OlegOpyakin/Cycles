@@ -1,5 +1,10 @@
 # Cycles(VDG)
 
+## Related projects
+
+- [Control flow graph analysys](https://github.com/OlegOpyakin/Dominators.git)
+- [Reaching definitions analysys(also AE & LV)](https://github.com/OlegOpyakin/Graphs.git)
+
 ## Overvie
 
 This project represents VGD(Variable Dependancy Graph) with it's generation and search for quasi-invariants. To find quasi invariants we find all loops in the graph and find nodes, reachable from the graph. Every unreachable variable is quasi-invariant. Finally for every quasi-invariant  we find longest path to the reachable from the loop variable and the length of this path is the iteration, when our variable can be taken out from the cycle
